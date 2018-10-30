@@ -1,0 +1,24 @@
+---
+# vars file for install-certbot-ssl-certs
+
+# The email of the Administrator
+install_certbot_ssl_certs_certbot_email: "admin@example.com"
+
+# The FQDN of the website you want a SSL cert for * WITHOUT * a "www" subdomain prefixing it.
+install_certbot_ssl_certs_website_to_secure: "example.com"
+
+# List of databases and users to setup. Not needed unless the "install_certbot_ssl_certs_use_list" variable is set to true. Default is false.
+install_certbot_ssl_certs_list_to_setup:
+  - {
+      url: 'yourcoolsite.com',
+      https: 'true'
+    }
+
+
+#####     Optional Variables      #####
+
+# Will you be passing a list of databases and/or database users to setup?
+#install_certbot_ssl_certs_use_list: false
+
+# Directory on target server to store certbot binary
+#install_certbot_ssl_certs_certbot_binary_dir: /opt/certbot

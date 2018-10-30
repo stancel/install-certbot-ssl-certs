@@ -1,0 +1,34 @@
+---
+# tasks file for install-certbot-ssl-certs
+
+- name: "Only passing individual values"
+  block:
+
+    - name: "Check if a certificate is already setup for this site"
+      stat:
+        path: /etc/letsencrypt/live/{{ install_certbot_ssl_certs_website_to_secure }}
+      register: stat_result
+
+    - name: "Get SSL Certificate"
+      command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}"
+      when: (item.https == 'true' and stat_result.stat.exists == False)
+      
+  when: not install_certbot_ssl_certs_use_list
+  
+- name: "Passing a list of of values"
+  block:
+
+    - name: "Check if a certificate is already setup for this site"
+      stat:
+        path: /etc/letsencrypt/live/{{ item.url }}
+      with_items: '{{ install_certbot_ssl_certs_list_to_setup }}'
+      register: stat_result
+  
+    - name: "Get SSL Certificate"
+      command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ item.url }} -d www.{{ item.url }}"
+      with_items: '{{ install_certbot_ssl_certs_list_to_setup }}'
+      when: (item.https == 'true' and stat_result.stat.exists == False)
+
+  when: install_certbot_ssl_certs_use_list
+
+

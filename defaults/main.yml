@@ -1,0 +1,10 @@
+---
+# defaults file for install-certbot-ssl-certs
+
+# Will you be passing a list of databases and/or database users to setup?
+install_certbot_ssl_certs_use_list: false
+
+# Directory on target server to store certbot binary
+install_certbot_ssl_certs_certbot_binary_dir: /opt/certbot
+
+
