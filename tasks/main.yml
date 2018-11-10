@@ -11,7 +11,7 @@
 
     - name: "Get SSL Certificate"
       command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}"
-      when: (item.https == true and stat_result.stat.exists == False)
+      when: (stat_result.stat.exists == False)
       
   when: not install_certbot_ssl_certs_use_list
   
