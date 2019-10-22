@@ -6,5 +6,3 @@ install_certbot_ssl_certs_use_list: false
 
 # Directory on target server to store certbot binary
 install_certbot_ssl_certs_certbot_binary_dir: /opt/certbot
-
-
