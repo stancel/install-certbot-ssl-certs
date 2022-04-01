@@ -12,15 +12,9 @@ galaxy_info:
   platforms:
   - name: Ubuntu
     versions:
-    - trusty
-    - xenial
+    - jammy
+    - focal
     - bionic
-  - name: Debian
-    versions:
-    - wheezy
-    - jessie
-    - stretch
-    - buster
 
   galaxy_tags: 
     - nginx

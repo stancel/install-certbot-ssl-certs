@@ -8,9 +8,9 @@
       stat:
         path: /etc/letsencrypt/live/{{ install_certbot_ssl_certs_website_to_secure }}
       register: stat_result
-
-    - name: "Get SSL Certificate"
-      command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}"
+    
+    - name: "Get SSL Certificates"
+      command: sudo certbot -n --{{ install_certbot_ssl_certs_webserver_used }} -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}
       when: (not stat_result.stat.exists)
       
   when: not install_certbot_ssl_certs_use_list
@@ -28,8 +28,13 @@
       debug:
         var: stat_result
   
-    - name: "Get SSL Certificate"
-      command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ item.item.url }} -d www.{{ item.item.url }}"
+    #- name: "Get SSL Certificate"
+    #  command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ item.item.url }} -d www.{{ item.item.url }}"
+    #  with_items: '{{ stat_result.results }}'
+    #  when: (item.item.https and not item.stat.exists)
+    
+    - name: "Get SSL Certificates"
+      command: sudo certbot -n --{{ install_certbot_ssl_certs_webserver_used }} -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}
       with_items: '{{ stat_result.results }}'
       when: (item.item.https and not item.stat.exists)
 

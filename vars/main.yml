@@ -19,5 +19,5 @@ install_certbot_ssl_certs_list_to_setup:
 # Will you be passing a list of databases and/or database users to setup?
 #install_certbot_ssl_certs_use_list: false
 
-# Directory on target server to store certbot binary
-#install_certbot_ssl_certs_certbot_binary_dir: /opt/certbot
+# Webserver being used that will serve up the generated Let's Encrypt certificates
+#install_certbot_ssl_certs_webserver_used: nginx

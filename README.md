@@ -34,17 +34,11 @@ List of databases and users to setup. Not needed unless the `install_certbot_ssl
         }
 ```
 
-(Default) Will you be passing a list of databases and/or database users to setup?
+(Default) Web server being used that will serve up the generated Let's Encrypt certificates. The default is "nginx".
 
 ```
-    install_certbot_ssl_certs_use_list: false
-```
-
-(Default) Directory on target server to store certbot binary
-
-```
-    install_certbot_ssl_certs_certbot_binary_dir: /opt/certbot
-```
+	install_certbot_ssl_certs_webserver_used: nginx
+```	
 
 Dependencies
 ------------
@@ -71,6 +65,7 @@ or just pass the variables in the playbook
 	  vars:
 		install_certbot_ssl_certs_certbot_email: "admin@example.com"
 		install_certbot_ssl_certs_website_to_secure: "example.com"
+		install_certbot_ssl_certs_webserver_used: "nginx"
 	  roles:
 	    - stancel.install_certbot_ssl_certs
 ```
