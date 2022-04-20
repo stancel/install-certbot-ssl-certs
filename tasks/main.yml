@@ -4,21 +4,31 @@
 - name: "Only passing individual values"
   block:
 
-    - name: "Check if a certificate is already setup for this site"
+    - name: "Check if a certificate is already setup for this site - single site"
       stat:
         path: /etc/letsencrypt/live/{{ install_certbot_ssl_certs_website_to_secure }}
       register: stat_result
+
+    - name: "Stop the webserver BEFORE calling Certbot to generate SSL certs with standalone option"
+      service: 
+        name: "{{ install_certbot_ssl_certs_webserver_used }}" 
+        state: stopped
     
     - name: "Get SSL Certificates"
-      command: sudo certbot -n --{{ install_certbot_ssl_certs_webserver_used }} -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}
+      command: sudo certbot certonly -n --standalone -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}
       when: (not stat_result.stat.exists)
+
+    - name: "Start the webserver AFTER calling Certbot to generate SSL certs with standalone option"
+      service: 
+        name: "{{ install_certbot_ssl_certs_webserver_used }}" 
+        state: started
       
   when: not install_certbot_ssl_certs_use_list
   
 - name: "Passing a list of of values"
   block:
 
-    - name: "Check if a certificate is already setup for this site"
+    - name: "Check if a certificate is already setup for this site - list of sites"
       stat:
         path: /etc/letsencrypt/live/{{ item.url }}
       with_items: '{{ install_certbot_ssl_certs_list_to_setup }}'
@@ -32,10 +42,20 @@
     #  command: "{{ install_certbot_ssl_certs_certbot_binary_dir }}/certbot-auto certonly --non-interactive --quiet --agree-tos --email {{ install_certbot_ssl_certs_certbot_email }} --standalone --pre-hook 'service nginx stop' --post-hook 'service nginx start' -d {{ item.item.url }} -d www.{{ item.item.url }}"
     #  with_items: '{{ stat_result.results }}'
     #  when: (item.item.https and not item.stat.exists)
+
+    - name: "Stop the webserver BEFORE calling Certbot to generate SSL certs with standalone option"
+      service: 
+        name: "{{ install_certbot_ssl_certs_webserver_used }}" 
+        state: stopped
     
     - name: "Get SSL Certificates"
-      command: sudo certbot -n --{{ install_certbot_ssl_certs_webserver_used }} -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ install_certbot_ssl_certs_website_to_secure }} -d www.{{ install_certbot_ssl_certs_website_to_secure }}
+      command: sudo certbot certonly -n --standalone -m {{ install_certbot_ssl_certs_certbot_email }} --agree-tos -d {{ item.item.url }} -d www.{{ item.item.url }}
       with_items: '{{ stat_result.results }}'
       when: (item.item.https and not item.stat.exists)
+
+    - name: "Start the webserver AFTER calling Certbot to generate SSL certs with standalone option"
+      service: 
+        name: "{{ install_certbot_ssl_certs_webserver_used }}" 
+        state: started
 
   when: install_certbot_ssl_certs_use_list
